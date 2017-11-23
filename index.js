@@ -60,25 +60,24 @@ app.post('/api/send', (req, res, next) => {
     let people = body.people
     let date_string = body.date + ':00Z'
 
-    let gmt_7 = new Date( date_string )
-    let utc = new Date( gmt_7.getTime() - ( 3600000 * 7 ) )
+    let gmt_7 = new Date( date_string ) // assuming date is GMT+7. for simplicity
+    let utc = new Date( gmt_7.getTime() - ( 3600000 * 7 ) ) // get utc
+    let now = Date.now() + 1000 // get now
 
-    let date = new Date( utc )
+    let date = new Date( utc <= now ? now : utc ) // if utc is already a past, then use now + 1 second
+    console.log( 'scheduling at', date.getTime() / 1000 )
 
     let auto_start = true
 
-    res.status( 200 ).json( { message: 'scheduled' } )
+    res.status( 200 ).json( { message: 'scheduled' } ) // send response
 
-
-
-    let job = new cron.CronJob( date, () => {
+    let job = new cron.CronJob( date, () => { // create scheduled job
+        console.log('firing!!')
         Promise.all( people.map( p =>  sendMessage( p, message, is_image )) )
         .then( console.log )
         .catch( console.log )
     }, () => {
     }, auto_start, 'UTC' )
-
-
 })
 
 
