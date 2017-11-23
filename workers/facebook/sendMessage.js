@@ -21,15 +21,6 @@ module.exports = ( recipient = '', message = '', is_image = false ) => {
         }
     }
 
-    // if ( image_url ) {
-    //     // message.attachment = { 
-    //     //     type: 'image',
-    //     //     payload: {
-    //     //         url: image_url
-    //     //     }
-    //     // }
-    // }
-
     return new Promise( ( resolve, reject ) => {
 
         request( {

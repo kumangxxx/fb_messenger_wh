@@ -5,6 +5,7 @@ var pageSetup = function ( locals ) {
 }
 
 var onSubmitForm = function( e ) {
+
     console.log('here')
     console.log(e)
 
@@ -13,6 +14,9 @@ var onSubmitForm = function( e ) {
 
     let message = $('#txtMessage').val()
     let is_image = $('#isImage').prop('checked')
+    let date = $('#txtDate').val() + ' ' + $('#txtHour').val() + ':' + $('#txtMinute').val()
+
+    console.log( date )
 
     let people = []
 
@@ -23,12 +27,19 @@ var onSubmitForm = function( e ) {
     let headers = new Headers()
     headers.append('Content-Type', 'application/json')
 
+    $( '#btnSend' ).prop( 'disabled', true )
+
     fetch( new Request('/api/send'), {
         method: 'POST',
         headers,
-        body: JSON.stringify( { message, is_image, people } )
+        body: JSON.stringify( { message, is_image, people, date } )
     } ).then( resp => resp.json() )
-    .then( console.log )
+    .then( json => {
+        console.log( json )
+        $( '#btnSend' ).prop( 'disabled', false )
+        $( '#txtMessage' ).val('')
+    
+    } )
     
 }
 

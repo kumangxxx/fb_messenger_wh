@@ -1,21 +1,46 @@
 html
     head
         script(src="/static/jquery/jquery.js")
+        
         script(src='/static/bootstrap/js/bootstrap.min.js')
-        script(src='/static/bootstrap/js/bootstrap.bundle.js')
+        script(src='/static/js/bootstrap-datepicker.js')
+        //- script(src='/static/bootstrap/js/bootstrap.bundle.js')
         script(src='/static/js/home.js')
         script.
             pageSetup( !{ JSON.stringify( locals ) } )
-        link(rel='stylesheet' href='/static/bootstrap/css/bootstrap.min.css')
+            $( document ).ready( () => {
+                $( '.input-group.date' ).datepicker( {
+                    format: 'yyyy-mm-dd'
+                } )
+            } ) 
+        //- link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin="anonymous")
+        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin="anonymous")
+        link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css", integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp", crossorigin="anonymous")
+        //- script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js", integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa", crossorigin="anonymous")
+
+
+
         title FB Spammer
-    body
+    body(style="padding: 20px")
         form#form.form.m-4.p-4(action="send", enctype="application/json", method="post", onSubmit="onSubmitForm( event )")
             .form-group
                 label(for="txtMessage") Message
                 input#txtMessage.form-control(type="text", name="txtMessage", placeholder="Did you know that sugar taste sweet ? crazy right ?")
                 input#isImage(type="checkbox", name="is_image") 
                 span.ml-2 My message is an image URL
-            
+
+
+            div.form-group(style="width: 100%")
+                label(for="") When to send
+                div.form-group.form-inline
+                    div.input-group.date
+                        input#txtDate.form-control(type="text" value="#{time.date}") 
+                        div.input-group-addon
+                            span.glyphicon.glyphicon-calendar(aria-hidden="true")
+                    input#txtHour.form-control(value="#{time.hour}" type="number" max="23" style="width: 80px; margin-left: 10px" placeholder="Hour")
+                    input#txtMinute.form-control(value="#{time.minute}" type="number" max="59" style="width: 80px; margin-left: 10px" placeholder="Minute")
+                
+
             .form-group
                 label(for="cmbGroup") Target
                 .form-group.form-inline
@@ -24,7 +49,7 @@ html
                         each g in locals.groups
                             option(value=g._id) #{ g.name }
                         option(value="-1") Custom
-                    button.btn.btn-primary.m-2(type="submit") Send
+                    button#btnSend.btn.btn-primary.m-2(type="submit" style="margin-left: 8px") Send
             
             table.table.table-striped
                 each person in locals.people

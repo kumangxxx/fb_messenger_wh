@@ -10,6 +10,8 @@ const body_parser = require('body-parser')
 const jade = require('jade')
 const mongoose = require('mongoose')
 const sendMessage = require('./workers/facebook/sendMessage')
+const moment = require('moment')
+const cron = require('cron')
 
 /**
  * CONNECT TO DB
@@ -56,10 +58,27 @@ app.post('/api/send', (req, res, next) => {
     let message = body.message
     let is_image = body.is_image
     let people = body.people
+    let date_string = body.date + ':00Z'
 
-    Promise.all( people.map( p =>  sendMessage( p, message, is_image )) )
-    .then( result => res.status( 200 ).json( result ) )
-    .catch( err => res.status( 500 ).json( { message: err.message || 'internal server error' } ) )
+    let gmt_7 = new Date( date_string )
+    let utc = new Date( gmt_7.getTime() - ( 3600000 * 7 ) )
+
+    let date = new Date( utc )
+
+    let auto_start = true
+
+    res.status( 200 ).json( { message: 'scheduled' } )
+
+
+
+    let job = new cron.CronJob( date, () => {
+        Promise.all( people.map( p =>  sendMessage( p, message, is_image )) )
+        .then( console.log )
+        .catch( console.log )
+    }, () => {
+    }, auto_start, 'UTC' )
+
+
 })
 
 
