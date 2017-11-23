@@ -1,0 +1,34 @@
+html
+    head
+        script(src="/static/jquery/jquery.js")
+        script(src='/static/bootstrap/js/bootstrap.min.js')
+        script(src='/static/bootstrap/js/bootstrap.bundle.js')
+        script(src='/static/js/home.js')
+        script.
+            pageSetup( !{ JSON.stringify( locals ) } )
+        link(rel='stylesheet' href='/static/bootstrap/css/bootstrap.min.css')
+        title FB Spammer
+    body
+        form#form.form.m-4.p-4(action="send", enctype="application/json", method="post", onSubmit="onSubmitForm( event )")
+            .form-group
+                label(for="txtMessage") Message
+                input#txtMessage.form-control(type="text", name="txtMessage", placeholder="Did you know that sugar taste sweet ? crazy right ?")
+                input#isImage(type="checkbox", name="is_image") 
+                span.ml-2 My message is an image URL
+            
+            .form-group
+                label(for="cmbGroup") Target
+                .form-group.form-inline
+                    select#cmbGroup.form-control(name="cmbGroup" onchange="cmbGroupChanged( event, this.value )")
+                        option(value="0") everyone
+                        each g in locals.groups
+                            option(value=g._id) #{ g.name }
+                        option(value="-1") Custom
+                    button.btn.btn-primary.m-2(type="submit") Send
+            
+            table.table.table-striped
+                each person in locals.people
+                    tr
+                        td
+                            input.person-checkbox(id='person_' + person.id type="checkbox", name="person" checked disabled)
+                            span.ml-2 #{ person.name } 
